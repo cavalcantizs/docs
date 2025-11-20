@@ -1,214 +1,187 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT"
-    },
+    "title": "StylePay Gateway API",
+    "description": "API organizada nas rotas Carteira e Pix",
     "version": "1.0.0"
   },
   "servers": [
     {
-      "url": "http://sandbox.mintlify.com"
+      "url": "https://api.stylepay.com.br/api/v1"
     }
   ],
   "security": [
     {
-      
       "bearerAuth": []
     }
   ],
   "paths": {
-    "/plants": {
+    "/carteira/pix-payment": {
+      "post": {
+        "description": "Criar pagamento PIX",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PixPaymentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Pagamento criado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PixPaymentResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/carteira/request-qrcode": {
+      "post": {
+        "description": "Gera um QR Code PIX para pagamento",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QrCodeRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "QR Code gerado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QrCodeResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/pix/balance": {
       "get": {
-        "description": "Returns all plants from the system that the user has access to",
+        "description": "Retorna o saldo da carteira PIX",
+        "responses": {
+          "200": {
+            "description": "Saldo retornado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Balance"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/pix/transaction": {
+      "get": {
+        "description": "Lista transações PIX",
         "parameters": [
           {
             "name": "limit",
             "in": "query",
-            "description": "The maximum number of results to return",
             "schema": {
-              "type": "integer",
-              "format": "int32"
+              "type": "integer"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Plant response",
+            "description": "Lista de transações",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Plant"
+                    "$ref": "#/components/schemas/Transaction"
                   }
                 }
               }
             }
-          },
-          "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "description": "Creates a new plant in the store",
-        "requestBody": {
-          "description": "Plant to add to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Plant"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of plant to delete",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
-          },
-          "400": {
-            "description": "unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
           }
         }
       }
     }
   },
-  "webhooks": {
-    "/plant/webhook": {
-      "post": {
-        "description": "Information about a new plant added to the store",
-        "requestBody": {
-          "description": "Plant added to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Return a 200 status to indicate that the data was received successfully"
-          }
-        }
-      }
-    }
-  },
+
   "components": {
     "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
+
+      "Balance": {
         "type": "object",
         "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
-          },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
+          "balance": {
+            "type": "number"
           }
         }
       },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
-          },
-          {
-            "required": [
-              "id"
-            ],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
-              }
-            }
-          }
-        ]
+
+      "Transaction": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "amount": { "type": "number" },
+          "status": { "type": "string" },
+          "created_at": { "type": "string" }
+        }
       },
+
+      "PixPaymentRequest": {
+        "type": "object",
+        "properties": {
+          "amount": { "type": "number" },
+          "description": { "type": "string" }
+        }
+      },
+
+      "PixPaymentResponse": {
+        "type": "object",
+        "properties": {
+          "payment_id": { "type": "string" },
+          "status": { "type": "string" }
+        }
+      },
+
+      "QrCodeRequest": {
+        "type": "object",
+        "properties": {
+          "amount": { "type": "number" }
+        }
+      },
+
+      "QrCodeResponse": {
+        "type": "object",
+        "properties": {
+          "qrcode": { "type": "string" },
+          "pix_code": { "type": "string" }
+        }
+      },
+
       "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
         "type": "object",
         "properties": {
-          "error": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "message": {
-            "type": "string"
-          }
+          "error": { "type": "integer" },
+          "message": { "type": "string" }
         }
-      }
-    },
-    "securitySchemes": {
+      },
+
       "bearerAuth": {
         "type": "http",
         "scheme": "bearer"
