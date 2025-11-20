@@ -20,12 +20,17 @@
             ]
           },
           {
-            "group": "Endpoints",
+            "group": "Gateway (PIX)",
             "pages": [
-              "api-reference/endpoint/post",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api-reference/Pix/request-qrcode",
+              "api-reference/Pix/pix-payment"
+            ]
+          },
+          {
+            "group": "Wallet (Carteira)",
+            "pages": [
+              "api-reference/Carteira/balance",
+              "api-reference/Carteira/transaction"
             ]
           }
         ]
@@ -37,11 +42,6 @@
           "anchor": "Documentation",
           "href": "https://mintlify.com/docs",
           "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
         }
       ]
     }
